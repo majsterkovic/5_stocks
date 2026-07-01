@@ -679,20 +679,20 @@ footer {
     gap: 16px;
   }
 
-  /* On tablet, sidebar becomes a horizontal scrollable row */
+  /* Keep vertical sidebar list on tablet, but hide extra elements to save space */
   .stocks-sidebar {
-    flex-direction: row;
-    overflow-x: auto;
-    gap: 12px;
-    padding-bottom: 8px;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 0;
   }
 
   .stocks-sidebar .stock-card {
-    min-width: 280px;
-    flex-shrink: 0;
-    scroll-snap-align: start;
+    min-width: 100%;
+  }
+
+  .stocks-sidebar .stock-card .stock-desc,
+  .stocks-sidebar .stock-card .stock-metrics {
+    display: none;
   }
 
   .sidebar-title {
@@ -758,49 +758,48 @@ footer {
     padding: 3px 6px !important;
   }
 
-  /* Sidebar — horizontal scroll with compact cards */
+  /* Sidebar — clean vertical list on mobile, no horizontal scrolling */
   .stocks-sidebar {
-    gap: 10px;
+    flex-direction: column;
+    overflow-x: visible;
+    gap: 8px;
+    padding-bottom: 0;
   }
 
   .stocks-sidebar .stock-card {
-    min-width: 240px;
-    padding: 14px;
-    gap: 8px;
+    min-width: 100%;
+    flex-shrink: 1;
+    padding: 10px 14px;
+    gap: 4px;
+  }
+
+  /* Hide description and minor metrics in the sidebar list on mobile to save vertical space */
+  .stocks-sidebar .stock-card .stock-desc,
+  .stocks-sidebar .stock-card .stock-metrics {
+    display: none;
   }
 
   .stock-logo {
-    width: 36px;
-    height: 36px;
-    font-size: 1rem;
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
   }
 
   .stock-symbol {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
   .stock-fullname {
     font-size: 0.8rem;
-    max-width: 120px;
+    max-width: 150px;
   }
 
   .stock-price {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
   .stock-change {
     font-size: 0.8rem;
-  }
-
-  .stock-desc {
-    font-size: 0.8rem;
-    -webkit-line-clamp: 1;
-  }
-
-  .stock-metrics {
-    font-size: 0.7rem;
-    gap: 4px;
-    padding-top: 8px;
   }
 
   /* Detail view — compact */
