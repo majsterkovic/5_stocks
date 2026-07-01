@@ -450,8 +450,8 @@ header p {
 /* Tabs & Info Section */
 .info-section {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 24px;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 20px;
 }
 
 @media (max-width: 900px) {
@@ -480,29 +480,29 @@ header p {
 
 .detail-indicator-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 8px;
 }
 
 .indicator-card {
   background: var(--bg-tertiary);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: var(--border-radius);
-  padding: 14px;
+  border-radius: var(--border-radius-sm);
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .indicator-label {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
 }
 
 .indicator-value {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--text-primary);
 }
