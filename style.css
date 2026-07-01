@@ -665,3 +665,270 @@ footer {
   border-top: 1px solid var(--border-color);
   padding-top: 24px;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE — Tablet (≤1024px)
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .container {
+    padding: 16px;
+  }
+
+  .dashboard {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* On tablet, sidebar becomes a horizontal scrollable row */
+  .stocks-sidebar {
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 12px;
+    padding-bottom: 8px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .stocks-sidebar .stock-card {
+    min-width: 280px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+
+  .sidebar-title {
+    font-size: 0.9rem;
+  }
+
+  .detail-view {
+    border-radius: var(--border-radius);
+    padding: 20px;
+    min-height: auto;
+  }
+
+  .info-section {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-container {
+    height: 300px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE — Mobile (≤640px)
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .container {
+    padding: 12px;
+  }
+
+  /* Header — compact */
+  header {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    gap: 8px;
+  }
+
+  header h1 {
+    font-size: 1.2rem;
+    gap: 8px;
+  }
+
+  header p {
+    font-size: 0.85rem;
+  }
+
+  .logo-svg-large {
+    width: 28px;
+    height: 28px;
+  }
+
+  /* Banner — smaller */
+  .banner-container {
+    height: 70px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .banner-container h2 {
+    font-size: 1rem !important;
+  }
+
+  .banner-container span {
+    font-size: 0.65rem !important;
+    padding: 3px 6px !important;
+  }
+
+  /* Sidebar — horizontal scroll with compact cards */
+  .stocks-sidebar {
+    gap: 10px;
+  }
+
+  .stocks-sidebar .stock-card {
+    min-width: 240px;
+    padding: 14px;
+    gap: 8px;
+  }
+
+  .stock-logo {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+
+  .stock-symbol {
+    font-size: 1rem;
+  }
+
+  .stock-fullname {
+    font-size: 0.8rem;
+    max-width: 120px;
+  }
+
+  .stock-price {
+    font-size: 1rem;
+  }
+
+  .stock-change {
+    font-size: 0.8rem;
+  }
+
+  .stock-desc {
+    font-size: 0.8rem;
+    -webkit-line-clamp: 1;
+  }
+
+  .stock-metrics {
+    font-size: 0.7rem;
+    gap: 4px;
+    padding-top: 8px;
+  }
+
+  /* Detail view — compact */
+  .detail-view {
+    padding: 16px;
+    gap: 16px;
+    border-radius: var(--border-radius);
+  }
+
+  .detail-header {
+    gap: 12px;
+  }
+
+  .detail-logo {
+    width: 44px;
+    height: 44px;
+    font-size: 1.4rem;
+    border-radius: var(--border-radius-sm);
+  }
+
+  .detail-title-area {
+    gap: 12px;
+  }
+
+  .detail-symbol {
+    font-size: 1.5rem;
+  }
+
+  .detail-fullname {
+    font-size: 1rem;
+  }
+
+  /* Chart — shorter on mobile */
+  .chart-container {
+    height: 240px;
+    border-radius: var(--border-radius-sm);
+  }
+
+  /* Info section — stacked */
+  .info-section {
+    gap: 16px;
+  }
+
+  .info-content {
+    gap: 12px;
+  }
+
+  .info-content h3 {
+    font-size: 1rem;
+  }
+
+  .info-content p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  /* Indicator cards — 2 columns on mobile */
+  .detail-indicator-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .indicator-card {
+    padding: 8px 10px;
+  }
+
+  .indicator-label {
+    font-size: 0.65rem;
+  }
+
+  .indicator-value {
+    font-size: 0.95rem;
+  }
+
+  /* Footer */
+  footer {
+    margin-top: 32px;
+    padding-top: 16px;
+    font-size: 0.75rem;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE — Small phones (≤380px)
+   ═══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 380px) {
+  .container {
+    padding: 8px;
+  }
+
+  header h1 {
+    font-size: 1rem;
+  }
+
+  .stocks-sidebar .stock-card {
+    min-width: 200px;
+    padding: 12px;
+  }
+
+  .detail-view {
+    padding: 12px;
+  }
+
+  .detail-symbol {
+    font-size: 1.3rem;
+  }
+
+  .chart-container {
+    height: 200px;
+  }
+
+  .detail-indicator-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .indicator-value {
+    font-size: 0.85rem;
+  }
+}
+
+/* Touch-friendly: remove hover transforms on touch devices */
+@media (hover: none) {
+  .stock-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .btn:hover {
+    transform: none;
+  }
+}
