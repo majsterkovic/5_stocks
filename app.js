@@ -12,7 +12,7 @@ async function fetchPrices() {
 
   try {
     // Try public finance APIs for real-time prices
-    const response = await fetch('https://api.iextrading.com/1.0/tops/last?symbols=AMZN,GOOGL,LLY,TSM,AAPL');
+    const response = await fetch('https://api.iextrading.com/1.0/tops/last?symbols=NVDA,LLY,TSM,GOOG,AMZN');
     if (response.ok) {
       const data = await response.json();
       data.forEach(item => {
@@ -29,7 +29,6 @@ async function fetchPrices() {
   // Update UI components once prices are loaded
   renderStocksList();
   selectStock(currentSelectedSymbol);
-  updatePortfolioUI();
 }
 
 // Render the sidebar list of stocks
@@ -133,53 +132,23 @@ const exchangeMap = {
   AMZN: "NASDAQ:AMZN"
 };
 
-// Dynamically create/embed TradingView Chart Widget
-let currentWidget = null;
+// Dynamically create/embed TradingView Chart Widget via robust iframe
 function loadTradingViewChart(symbol) {
   const loader = document.getElementById('chart-loader');
   loader.classList.remove('hidden');
 
-  document.getElementById('tradingview_chart').innerHTML = '';
   const tvSymbol = exchangeMap[symbol] || `NASDAQ:${symbol}`;
+  const iframeUrl = `https://s.tradingview.com/widgetembed/?symbol=${encodeURIComponent(tvSymbol)}&interval=D&theme=dark&style=3&timezone=Europe%2FWarsaw&locale=pl&range=1Y`;
 
+  // Insert iframe
+  document.getElementById('tradingview_chart').innerHTML = `
+    <iframe src="${iframeUrl}" style="width: 100%; height: 100%; border: none; margin: 0; padding: 0;" onload="document.getElementById('chart-loader').classList.add('hidden')"></iframe>
+  `;
+
+  // Fallback to hide loader if iframe onload doesn't fire or takes too long
   setTimeout(() => {
-    try {
-      currentWidget = new TradingView.widget({
-        "autosize": true,
-        "symbol": tvSymbol,
-        "interval": "D",
-        "range": "1Y", // Displays exactly one year of data
-        "timezone": "Europe/Warsaw",
-        "theme": "dark",
-        "style": "3", // Area chart
-        "locale": "pl",
-        "toolbar_bg": "#1e293b",
-        "enable_publishing": false,
-        "hide_top_toolbar": true,
-        "hide_legend": false,
-        "save_image": false,
-        "container_id": "tradingview_chart",
-        "studies": [],
-        "callback": function() {
-          loader.classList.add('hidden');
-        }
-      });
-      
-      // Fallback in case callback doesn't fire (some browsers block iframe callbacks)
-      setTimeout(() => {
-        loader.classList.add('hidden');
-      }, 2000);
-
-    } catch (e) {
-      console.error("TradingView widget initialization failed:", e);
-      document.getElementById('tradingview_chart').innerHTML = `
-        <div style="height:100%; display:flex; align-items:center; justify-content:center; color:var(--text-secondary); text-align:center; padding: 20px;">
-          Wykres niedostępny w trybie offline.<br>Dane spółki i wskaźniki są wciąż w pełni aktywne.
-        </div>
-      `;
-      loader.classList.add('hidden');
-    }
-  }, 150);
+    loader.classList.add('hidden');
+  }, 1500);
 }
 
 // Initial startup
