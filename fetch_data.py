@@ -3,10 +3,10 @@ import json
 import os
 import urllib.request
 
-# The 5 stocks chosen by the user for the 2026 presentation
-TICKERS = ["NVDA", "LLY", "META", "GOOG", "AMZN"]
+# The 5 stocks chosen by the user for the 2026 presentation (swapped META for TSM)
+TICKERS = ["NVDA", "LLY", "TSM", "GOOG", "AMZN"]
 
-# Custom 2026 consensus metrics and Polish descriptions provided by the user
+# Custom 2026 consensus metrics and Polish descriptions
 METADATA = {
     "NVDA": {
         "logo": "🟢",
@@ -28,15 +28,15 @@ METADATA = {
         "potential": "+18.0%",
         "sector": "Farmacja i Zdrowie"
     },
-    "META": {
-        "logo": "💙",
-        "logoBg": "#0064E0",
-        "desc": "Właściciel Facebooka, Instagrama i WhatsAppa. Łączy mocny fundament reklamowy z dużą dyscypliną kosztową i dynamicznym wdrażaniem sztucznej inteligencji.",
-        "why": "Meta łączy silny biznes reklamowy (33% wzrostu przychodów w Q1) z efektywną redukcją kosztów i nowym modelem AI (Muse Spark). Przy P/E = 25 jest znacznie tańsza niż inni giganci tech. CFRA wskazuje najwyższy potencjalny wzrost ceny (+23%) spośród wszystkich analizowanych spółek.",
-        "growth2026": "26.0%",
-        "rating": "Strong Buy",
-        "potential": "+23.0%",
-        "sector": "Media Społecznościowe i AI"
+    "TSM": {
+        "logo": "🔌",
+        "logoBg": "#005EB8",
+        "desc": "Największa na świecie niezależna odlewnia półprzewodników. Produkuje najbardziej zaawansowane chipy na świecie dla gigantów takich jak Nvidia, Apple czy AMD, stanowiąc kręgosłup sektora technologicznego.",
+        "why": "Kluczowy element globalnego łańcucha dostaw AI. Wzrost zapotrzebowania na układy Blackwell od Nvidii oraz procesory Apple bezpośrednio przekłada się na wyniki spółki. W 2026 roku TSMC umacnia swoją pozycję monopolisty w segmencie chipów 2nm i 3nm.",
+        "growth2026": "28.0%",
+        "rating": "Buy",
+        "potential": "+15.0%",
+        "sector": "Półprzewodniki"
     },
     "GOOG": {
         "logo": "🔍",
@@ -84,8 +84,6 @@ def format_market_cap(market_cap):
 def format_percentage(val):
     if val is None:
         return "Brak"
-    # Yahoo returns dividend yield already in percentage-like format (e.g. 0.37 for 0.37%)
-    # Let's add a % sign.
     return f"{val:.2f}%"
 
 def main():

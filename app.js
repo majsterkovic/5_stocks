@@ -120,29 +120,18 @@ function selectStock(symbol) {
   document.getElementById('metric-rating').textContent = stock.rating || "--";
   document.getElementById('metric-potential').textContent = stock.potential || "--";
 
-  // Update Button text / state
-  const addBtn = document.getElementById('add-portfolio-btn');
-  if (portfolioSelection && portfolioSelection.symbol === symbol) {
-    addBtn.textContent = 'Wybrana (W portfelu)';
-    addBtn.className = 'btn btn-success badge-glow';
-    addBtn.disabled = true;
-  } else {
-    addBtn.innerHTML = `
-      <svg class="logo-svg" viewBox="0 0 24 24">
-        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-      </svg>
-      Wybierz do Portfela
-    `;
-    addBtn.className = 'btn btn-success';
-    addBtn.disabled = false;
-  }
-
   // Update chart
   loadTradingViewChart(symbol);
-
-  // Update simulated shares calculation
-  updateSharesSimulation();
 }
+
+// Mapping tickers to their respective exchanges for accurate TradingView data
+const exchangeMap = {
+  NVDA: "NASDAQ:NVDA",
+  LLY: "NYSE:LLY",
+  TSM: "NYSE:TSM",
+  GOOG: "NASDAQ:GOOG",
+  AMZN: "NASDAQ:AMZN"
+};
 
 // Dynamically create/embed TradingView Chart Widget
 let currentWidget = null;
@@ -151,13 +140,15 @@ function loadTradingViewChart(symbol) {
   loader.classList.remove('hidden');
 
   document.getElementById('tradingview_chart').innerHTML = '';
+  const tvSymbol = exchangeMap[symbol] || `NASDAQ:${symbol}`;
 
   setTimeout(() => {
     try {
       currentWidget = new TradingView.widget({
         "autosize": true,
-        "symbol": `NASDAQ:${symbol}`,
+        "symbol": tvSymbol,
         "interval": "D",
+        "range": "1Y", // Displays exactly one year of data
         "timezone": "Europe/Warsaw",
         "theme": "dark",
         "style": "3", // Area chart
@@ -190,179 +181,6 @@ function loadTradingViewChart(symbol) {
     }
   }, 150);
 }
-
-// Calculate simulation shares based on user input budget
-function updateSharesSimulation() {
-  const budgetInput = document.getElementById('budget');
-  const budget = parseFloat(budgetInput.value) || 0;
-  
-  const stock = stocksData[currentSelectedSymbol];
-  const priceUSD = activePrices[currentSelectedSymbol];
-  const pricePLN = priceUSD * USD_TO_PLN;
-
-  const shares = budget / pricePLN;
-  const simEl = document.getElementById('simulated-shares');
-
-  if (shares > 0) {
-    simEl.textContent = `${shares.toFixed(2)} akcji (po ${pricePLN.toFixed(2)} PLN / szt.)`;
-  } else {
-    simEl.textContent = "0 akcji";
-  }
-}
-
-// Handle portfolio selection
-document.getElementById('add-portfolio-btn').addEventListener('click', () => {
-  portfolioSelection = {
-    symbol: currentSelectedSymbol,
-    priceAtSelection: activePrices[currentSelectedSymbol]
-  };
-  localStorage.setItem('chosen_stock_portfolio', JSON.stringify(portfolioSelection));
-  
-  // Trigger update
-  updatePortfolioUI();
-  
-  // Update details button
-  selectStock(currentSelectedSymbol);
-});
-
-// Update portfolio panel at the bottom
-function updatePortfolioUI() {
-  const container = document.getElementById('portfolio-list-container');
-  const emptyState = document.getElementById('portfolio-empty-state');
-  const totalValEl = document.getElementById('portfolio-total-val');
-  const budgetInput = document.getElementById('budget');
-  const budget = parseFloat(budgetInput.value) || 0;
-
-  // Try loading from localStorage if local state is null
-  if (!portfolioSelection) {
-    const saved = localStorage.getItem('chosen_stock_portfolio');
-    if (saved) {
-      portfolioSelection = JSON.parse(saved);
-    }
-  }
-
-  if (!portfolioSelection) {
-    emptyState.style.display = 'block';
-    if (container.querySelector('.portfolio-grid')) {
-      container.querySelector('.portfolio-grid').remove();
-    }
-    totalValEl.textContent = "0.00 PLN";
-    return;
-  }
-
-  emptyState.style.display = 'none';
-
-  const symbol = portfolioSelection.symbol;
-  const stock = stocksData[symbol];
-  const currentPrice = activePrices[symbol];
-  const pricePLN = currentPrice * USD_TO_PLN;
-  const purchasePricePLN = portfolioSelection.priceAtSelection * USD_TO_PLN;
-  
-  // Calculate shares bought with full budget
-  const sharesCount = budget / purchasePricePLN;
-  const currentValPLN = sharesCount * pricePLN;
-  const profitPLN = currentValPLN - budget;
-  const profitPct = ((currentPrice - portfolioSelection.priceAtSelection) / portfolioSelection.priceAtSelection) * 100;
-
-  totalValEl.textContent = `${currentValPLN.toFixed(2)} PLN`;
-
-  // Remove existing grid if any
-  const existingGrid = container.querySelector('.portfolio-grid');
-  if (existingGrid) {
-    existingGrid.remove();
-  }
-
-  const grid = document.createElement('div');
-  grid.className = 'portfolio-grid';
-  grid.innerHTML = `
-    <div class="portfolio-item">
-      <div class="portfolio-item-header">
-        <div class="portfolio-item-identity">
-          <div class="stock-logo" style="background-color: ${stock.logoBg}15; color: ${stock.logoBg}; width:30px; height:30px; font-size:1rem;">${stock.logo}</div>
-          <span style="font-weight:700;">${stock.symbol}</span>
-          <span style="font-size:0.8rem; color:var(--text-muted);">${stock.fullname}</span>
-        </div>
-        <button class="portfolio-item-remove" onclick="removeFromPortfolio()">
-          Usuń
-        </button>
-      </div>
-
-      <div style="margin: 8px 0;">
-        <span style="font-size: 0.8rem; color: var(--text-secondary);">Wielkość Pakietu:</span>
-        <div style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-top:2px;">
-          ${sharesCount.toFixed(4)} akcji
-        </div>
-      </div>
-
-      <div class="portfolio-item-details">
-        <div>
-          <span style="color: var(--text-muted);">Cena Zakupu:</span>
-          <div class="portfolio-item-val">${purchasePricePLN.toFixed(2)} PLN</div>
-        </div>
-        <div>
-          <span style="color: var(--text-muted);">Aktualny Kurs:</span>
-          <div class="portfolio-item-val">${pricePLN.toFixed(2)} PLN</div>
-        </div>
-      </div>
-
-      <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; margin-top: 4px;">
-        <span style="font-size: 0.8rem; color: var(--text-secondary);">Symulowana zmiana kursu (zobacz wpływ na budżet):</span>
-        <div style="display: flex; align-items: center; gap: 12px; margin-top: 8px;">
-          <input type="range" id="price-slider" min="-50" max="100" value="${profitPct.toFixed(0)}" style="flex: 1; accent-color: var(--accent-color);">
-          <span id="slider-pct-label" style="font-weight: 700; min-width: 50px; text-align: right;">${profitPct >= 0 ? '+' : ''}${profitPct.toFixed(0)}%</span>
-        </div>
-        <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 0.85rem;">
-          <span style="color: var(--text-muted);">Szacowany Wynik:</span>
-          <span id="sim-profit-value" style="font-weight: 700;">${profitPLN >= 0 ? '+' : ''}${profitPLN.toFixed(2)} PLN</span>
-        </div>
-      </div>
-    </div>
-  `;
-
-  container.appendChild(grid);
-
-  // Setup simulation slider listener
-  const slider = document.getElementById('price-slider');
-  slider.addEventListener('input', (e) => {
-    const pct = parseFloat(e.target.value);
-    document.getElementById('slider-pct-label').textContent = `${pct >= 0 ? '+' : ''}${pct}%`;
-    
-    const simulatedPricePLN = purchasePricePLN * (1 + pct / 100);
-    const simulatedVal = sharesCount * simulatedPricePLN;
-    const simulatedProfit = simulatedVal - budget;
-    
-    const profitValEl = document.getElementById('sim-profit-value');
-    profitValEl.textContent = `${simulatedProfit >= 0 ? '+' : ''}${simulatedProfit.toFixed(2)} PLN`;
-    
-    if (simulatedProfit >= 0) {
-      profitValEl.style.color = 'var(--success-color)';
-    } else {
-      profitValEl.style.color = 'var(--danger-color)';
-    }
-
-    // Update global badge temporarily to show simulation impact
-    totalValEl.textContent = `${simulatedVal.toFixed(2)} PLN`;
-    if (simulatedProfit >= 0) {
-      totalValEl.style.color = 'var(--success-color)';
-    } else {
-      totalValEl.style.color = 'var(--danger-color)';
-    }
-  });
-}
-
-// Remove stock from portfolio
-window.removeFromPortfolio = function() {
-  portfolioSelection = null;
-  localStorage.removeItem('chosen_stock_portfolio');
-  updatePortfolioUI();
-  selectStock(currentSelectedSymbol);
-};
-
-// Event listener for budget changes
-document.getElementById('budget').addEventListener('input', () => {
-  updateSharesSimulation();
-  updatePortfolioUI();
-});
 
 // Initial startup
 window.addEventListener('DOMContentLoaded', () => {

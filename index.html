@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stock Pick - Wybierz Spółkę do Portfela</title>
+  <title>TOP 5 Spółek na 2026 Rok - Analiza Rynkowa</title>
   <link rel="stylesheet" href="style.css">
   <!-- Load TradingView Widget Script -->
   <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
@@ -18,12 +18,7 @@
           </svg>
           Giełdowy Doradca
         </h1>
-        <p>Wybierz najlepszą spółkę do swojego portfela inwestycyjnego</p>
-      </div>
-      <div class="budget-setup">
-        <label for="budget" style="color: var(--text-secondary); font-weight: 500;">Twój Budżet:</label>
-        <input type="number" id="budget" class="budget-input" value="260" min="10" step="10">
-        <span style="color: var(--text-secondary); font-weight: 600; margin-left: 4px;">PLN</span>
+        <p>Analiza 5 liderów o najwyższym potencjale pobicia indeksu S&P 500 w 2026 roku</p>
       </div>
     </header>
 
@@ -32,7 +27,7 @@
       <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, rgba(11, 15, 25, 0.9) 30%, rgba(11, 15, 25, 0.1) 100%); display: flex; align-items: center; padding-left: 24px;">
         <div>
           <span style="background: rgba(99, 102, 241, 0.2); color: #818cf8; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; padding: 4px 8px; border-radius: 4px; letter-spacing: 0.05em;">Analiza Rynkowa</span>
-          <h2 style="font-size: 1.5rem; font-weight: 700; margin-top: 4px; color: var(--text-primary);">Wybierz Spółkę dla Siebie</h2>
+          <h2 style="font-size: 1.5rem; font-weight: 700; margin-top: 4px; color: var(--text-primary);">Wybór 5 Spółek na 2026 Rok</h2>
         </div>
       </div>
     </div>
@@ -55,14 +50,6 @@
               <span id="detail-symbol" class="detail-symbol">AAPL</span>
               <span id="detail-fullname" class="detail-fullname">Apple Inc.</span>
             </div>
-          </div>
-          <div class="detail-cta">
-            <button id="add-portfolio-btn" class="btn btn-success">
-              <svg class="logo-svg" viewBox="0 0 24 24">
-                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-              </svg>
-              Wybierz do Portfela
-            </button>
           </div>
         </div>
 
@@ -114,34 +101,8 @@
           </div>
         </div>
 
-        <!-- Budget Calculation Highlight -->
-        <div id="simulator-info" style="border-top: 1px solid var(--border-color); padding-top: 20px; display: flex; align-items: center; justify-content: space-between;">
-          <span style="color: var(--text-secondary);">Z Twoim budżetem możesz kupić:</span>
-          <span id="simulated-shares" style="font-size: 1.25rem; font-weight: 700; color: var(--success-color);">0 akcji</span>
-        </div>
       </section>
     </main>
-
-    <!-- Bottom Section: Selected Portfolio -->
-    <section class="portfolio-panel">
-      <div class="portfolio-header">
-        <div class="portfolio-title">
-          <svg class="logo-svg" viewBox="0 0 24 24" style="fill: var(--success-color);">
-            <path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/>
-          </svg>
-          <h2>Wybrana spółka w Twoim portfelu</h2>
-        </div>
-        <div class="portfolio-badge">
-          Łączna Wartość: <span id="portfolio-total-val">0.00 PLN</span>
-        </div>
-      </div>
-      <div id="portfolio-list-container">
-        <!-- Render selected portfolio or empty state -->
-        <div class="portfolio-empty" id="portfolio-empty-state">
-          Twój portfel jest pusty. Kliknij "Wybierz do Portfela" przy wybranej spółce, aby dodać ją tutaj.
-        </div>
-      </div>
-    </section>
   </div>
 
   <footer>
