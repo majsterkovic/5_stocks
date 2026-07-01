@@ -140,7 +140,11 @@ def main():
                 "oneYearReturn": one_year_return,
                 "returnNumeric": return_numeric,
                 "fallbackPrice": current_price,
-                "sector": metadata["sector"]
+                "sector": metadata["sector"],
+                "priceHistory": {
+                    "dates": hist.index.strftime("%Y-%m-%d").tolist(),
+                    "prices": [round(float(p), 2) for p in hist['Close'].tolist()]
+                }
             }
             print(f"Pobrano pomyślnie {ticker_symbol} (Cena: {current_price} USD)")
 
