@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock Pick - Wybierz Spółkę do Portfela</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Load TradingView Widget Script -->
+  <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>
+          <svg class="logo-svg-large" viewBox="0 0 24 24">
+            <path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L3 15.66l.5.01zM2 20h20v2H2v-2z" fill="#6366f1"/>
+          </svg>
+          Giełdowy Doradca
+        </h1>
+        <p>Wybierz najlepszą spółkę do swojego portfela inwestycyjnego</p>
+      </div>
+      <div class="budget-setup">
+        <label for="budget" style="color: var(--text-secondary); font-weight: 500;">Twój Budżet:</label>
+        <input type="number" id="budget" class="budget-input" value="260" min="10" step="10">
+        <span style="color: var(--text-secondary); font-weight: 600; margin-left: 4px;">PLN</span>
+      </div>
+    </header>
+
+    <div class="banner-container" style="width: 100%; height: 140px; border-radius: var(--border-radius); overflow: hidden; margin-bottom: 24px; border: 1px solid var(--border-color); position: relative;">
+      <img src="assets/finance_banner.png" alt="Finance Banner" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.85;">
+      <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to right, rgba(11, 15, 25, 0.9) 30%, rgba(11, 15, 25, 0.1) 100%); display: flex; align-items: center; padding-left: 24px;">
+        <div>
+          <span style="background: rgba(99, 102, 241, 0.2); color: #818cf8; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; padding: 4px 8px; border-radius: 4px; letter-spacing: 0.05em;">Analiza Rynkowa</span>
+          <h2 style="font-size: 1.5rem; font-weight: 700; margin-top: 4px; color: var(--text-primary);">Wybierz Spółkę dla Siebie</h2>
+        </div>
+      </div>
+    </div>
+
+    <main class="dashboard">
+      <!-- Left Column: List of Stocks -->
+      <section class="stocks-sidebar">
+        <h2 class="sidebar-title">Spółki do wyboru</h2>
+        <div id="stocks-list" class="stocks-sidebar">
+          <!-- Dynamically populated via JS -->
+        </div>
+      </section>
+
+      <!-- Right Column: Detail View -->
+      <section class="detail-view" id="detail-panel">
+        <div class="detail-header">
+          <div class="detail-title-area">
+            <div id="detail-logo" class="detail-logo">AAPL</div>
+            <div class="detail-names">
+              <span id="detail-symbol" class="detail-symbol">AAPL</span>
+              <span id="detail-fullname" class="detail-fullname">Apple Inc.</span>
+            </div>
+          </div>
+          <div class="detail-cta">
+            <button id="add-portfolio-btn" class="btn btn-success">
+              <svg class="logo-svg" viewBox="0 0 24 24">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+              </svg>
+              Wybierz do Portfela
+            </button>
+          </div>
+        </div>
+
+        <!-- Interactive Chart Frame -->
+        <div class="chart-container">
+          <div id="chart-loader" class="chart-loading">Wczytywanie interaktywnego wykresu...</div>
+          <div id="tradingview_chart" style="width: 100%; height: 100%;"></div>
+        </div>
+
+        <!-- Info Grid (Description and Indicators) -->
+        <div class="info-section">
+          <div class="info-content">
+            <h3>O Spółce</h3>
+            <p id="detail-desc" style="color: var(--text-secondary); line-height: 1.5;">
+              Ładowanie opisu...
+            </p>
+            <h4 style="margin-top: 16px; font-size: 1rem; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
+              <span style="color: var(--warning-color);">💡</span> Dlaczego warto (Perspektywa 2026):
+            </h4>
+            <p id="detail-why" style="border-left: 2px solid var(--accent-color); padding-left: 12px; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; font-style: italic; margin-top: 8px;">
+              Ładowanie rekomendacji...
+            </p>
+          </div>
+          <div class="detail-indicator-grid">
+            <div class="indicator-card">
+              <span class="indicator-label">P/E (C/Z)</span>
+              <span id="metric-pe" class="indicator-value">--</span>
+            </div>
+            <div class="indicator-card">
+              <span class="indicator-label">Kapitalizacja</span>
+              <span id="metric-cap" class="indicator-value">--</span>
+            </div>
+            <div class="indicator-card">
+              <span class="indicator-label">Roczna Stopa Zwrotu</span>
+              <span id="metric-return" class="indicator-value">--</span>
+            </div>
+            <div class="indicator-card" style="border-color: rgba(99, 102, 241, 0.2);">
+              <span class="indicator-label" style="color: var(--accent-color);">Wzrost Przychodów '26</span>
+              <span id="metric-growth" class="indicator-value" style="color: var(--accent-color);">--</span>
+            </div>
+            <div class="indicator-card" style="border-color: rgba(16, 185, 129, 0.2);">
+              <span class="indicator-label" style="color: var(--success-color);">Rekomendacja CFRA</span>
+              <span id="metric-rating" class="indicator-value" style="color: var(--success-color);">--</span>
+            </div>
+            <div class="indicator-card" style="border-color: rgba(245, 158, 11, 0.2);">
+              <span class="indicator-label" style="color: var(--warning-color);">Potencjał Wzrostu</span>
+              <span id="metric-potential" class="indicator-value" style="color: var(--warning-color);">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Budget Calculation Highlight -->
+        <div id="simulator-info" style="border-top: 1px solid var(--border-color); padding-top: 20px; display: flex; align-items: center; justify-content: space-between;">
+          <span style="color: var(--text-secondary);">Z Twoim budżetem możesz kupić:</span>
+          <span id="simulated-shares" style="font-size: 1.25rem; font-weight: 700; color: var(--success-color);">0 akcji</span>
+        </div>
+      </section>
+    </main>
+
+    <!-- Bottom Section: Selected Portfolio -->
+    <section class="portfolio-panel">
+      <div class="portfolio-header">
+        <div class="portfolio-title">
+          <svg class="logo-svg" viewBox="0 0 24 24" style="fill: var(--success-color);">
+            <path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/>
+          </svg>
+          <h2>Wybrana spółka w Twoim portfelu</h2>
+        </div>
+        <div class="portfolio-badge">
+          Łączna Wartość: <span id="portfolio-total-val">0.00 PLN</span>
+        </div>
+      </div>
+      <div id="portfolio-list-container">
+        <!-- Render selected portfolio or empty state -->
+        <div class="portfolio-empty" id="portfolio-empty-state">
+          Twój portfel jest pusty. Kliknij "Wybierz do Portfela" przy wybranej spółce, aby dodać ją tutaj.
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <p>Projekt przygotowany z myślą o prezentacji inwestycyjnej. Dane rynkowe pobierane w czasie rzeczywistym z TradingView.</p>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
