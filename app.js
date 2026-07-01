@@ -123,32 +123,93 @@ function selectStock(symbol) {
   loadTradingViewChart(symbol);
 }
 
-// Mapping tickers to their respective exchanges for accurate TradingView data
-const exchangeMap = {
-  NVDA: "NASDAQ:NVDA",
-  LLY: "NYSE:LLY",
-  TSM: "NYSE:TSM",
-  GOOG: "NASDAQ:GOOG",
-  AMZN: "NASDAQ:AMZN"
-};
+// Chart.js instance — destroy and recreate on each stock change
+let priceChart = null;
 
-// Dynamically create/embed TradingView Chart Widget via robust iframe
-function loadTradingViewChart(symbol) {
-  const loader = document.getElementById('chart-loader');
-  loader.classList.remove('hidden');
+function loadChart(symbol) {
+  const stock = stocksData[symbol];
+  if (!stock || !stock.priceHistory) return;
 
-  const tvSymbol = exchangeMap[symbol] || `NASDAQ:${symbol}`;
-  const iframeUrl = `https://s.tradingview.com/widgetembed/?symbol=${encodeURIComponent(tvSymbol)}&interval=D&theme=dark&style=3&timezone=Europe%2FWarsaw&locale=pl&range=1Y`;
+  const { dates, prices } = stock.priceHistory;
+  const isPositive = stock.returnNumeric >= 0;
+  const color = isPositive ? '#10b981' : '#ef4444';
+  const colorFade = isPositive ? 'rgba(16, 185, 129, 0.08)' : 'rgba(239, 68, 68, 0.08)';
 
-  // Insert iframe
-  document.getElementById('tradingview_chart').innerHTML = `
-    <iframe src="${iframeUrl}" style="width: 100%; height: 100%; border: none; margin: 0; padding: 0;" onload="document.getElementById('chart-loader').classList.add('hidden')"></iframe>
-  `;
+  // Destroy previous chart instance to avoid canvas reuse errors
+  if (priceChart) {
+    priceChart.destroy();
+    priceChart = null;
+  }
 
-  // Fallback to hide loader if iframe onload doesn't fire or takes too long
-  setTimeout(() => {
-    loader.classList.add('hidden');
-  }, 1500);
+  const ctx = document.getElementById('price-chart').getContext('2d');
+
+  priceChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: dates,
+      datasets: [{
+        label: `${symbol} – cena (USD)`,
+        data: prices,
+        borderColor: color,
+        borderWidth: 2,
+        pointRadius: 0,
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: color,
+        fill: true,
+        backgroundColor: (ctx) => {
+          const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, ctx.chart.height);
+          gradient.addColorStop(0, isPositive ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)');
+          gradient.addColorStop(1, 'rgba(0,0,0,0)');
+          return gradient;
+        },
+        tension: 0.3,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(17, 24, 39, 0.95)',
+          titleColor: '#f8fafc',
+          bodyColor: '#94a3b8',
+          borderColor: 'rgba(255,255,255,0.08)',
+          borderWidth: 1,
+          callbacks: {
+            label: (ctx) => ` $${ctx.parsed.y.toFixed(2)} USD`
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: '#64748b',
+            maxTicksLimit: 8,
+            maxRotation: 0,
+            callback: function(value, index, ticks) {
+              // Show month/year labels
+              const date = this.getLabelForValue(value);
+              const d = new Date(date);
+              return d.toLocaleDateString('pl-PL', { month: 'short', year: '2-digit' });
+            }
+          },
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          border: { color: 'rgba(255,255,255,0.08)' }
+        },
+        y: {
+          position: 'right',
+          ticks: {
+            color: '#64748b',
+            callback: (v) => `$${v.toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+          },
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          border: { color: 'rgba(255,255,255,0.08)' }
+        }
+      }
+    }
+  });
 }
 
 // Initial startup
